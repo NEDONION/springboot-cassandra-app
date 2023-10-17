@@ -10,6 +10,35 @@
 ## Get Started
 - Clone the repository, and install Maven Dependencies
 
+### Set up Cassandra
+
+```shell
+create keyspace ned_learning with replication={'class':'SimpleStrategy', 'replication_factor':1};
+```
+
+```shell
+use ned_learning;
+ 
+CREATE TABLE tutorial(
+   id timeuuid PRIMARY KEY,
+   title text,
+   description text,
+   published boolean
+);
+```
+
+```shell
+use ned_learning;
+
+CREATE TABLE person (
+    id UUID PRIMARY KEY,
+    name TEXT,
+    age INT,
+    tutorialIds LIST<UUID>
+);
+```
+
+
 
 ## getAllTutorials
 

@@ -1,5 +1,6 @@
 package com.jiacheng.cassandra.controller;
 
+import com.jiacheng.cassandra.annotation.LogExecutionTime;
 import com.jiacheng.cassandra.model.Tutorial;
 import com.jiacheng.cassandra.repository.TutorialRepository;
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class TutorialController {
 	}
 
 	@GetMapping("/tutorials")
+	@LogExecutionTime
 	public ResponseEntity<List<Tutorial>> getAllTutorials(@RequestParam(required = false)
 	String title) {
 
@@ -51,6 +53,7 @@ public class TutorialController {
 	}
 
 	@GetMapping("/tutorials/{id}")
+	@LogExecutionTime
 	public ResponseEntity<Tutorial> getTutorialById(@PathVariable("id") UUID id) {
 		Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
 
@@ -62,6 +65,7 @@ public class TutorialController {
 	}
 
 	@PostMapping("/tutorials")
+	@LogExecutionTime
 	public ResponseEntity<Tutorial> createTutorial(@RequestBody Tutorial tutorial) {
 		try {
 			Tutorial _tutorial = tutorialRepository.save(new Tutorial(
@@ -77,6 +81,7 @@ public class TutorialController {
 	}
 
 	@PutMapping("/tutorials/{id}")
+	@LogExecutionTime
 	public ResponseEntity<Tutorial> updateTutorial(@RequestBody Tutorial tutorial) {
 		Optional<Tutorial> tutorialData = tutorialRepository.findById(tutorial.getId());
 
@@ -92,6 +97,7 @@ public class TutorialController {
 	}
 
 	@DeleteMapping("/tutorials/{id}")
+	@LogExecutionTime
 	public ResponseEntity<HttpStatus> deleteTutorial(@PathVariable("id") UUID id) {
 		try {
 			tutorialRepository.deleteById(id);
@@ -102,6 +108,7 @@ public class TutorialController {
 	}
 
 	@DeleteMapping("/tutorials")
+	@LogExecutionTime
 	public ResponseEntity<HttpStatus> deleteAllTutorials() {
 		try {
 			tutorialRepository.deleteAll();
@@ -112,6 +119,7 @@ public class TutorialController {
 	}
 
 	@GetMapping("/tutorials/published")
+	@LogExecutionTime
 	public ResponseEntity<List<Tutorial>> findByPublished() {
 		List<Tutorial> tutorials = new ArrayList<>();
 
