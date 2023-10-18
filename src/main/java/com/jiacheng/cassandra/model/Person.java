@@ -12,11 +12,8 @@ public class Person {
 
 	@PrimaryKey
 	private UUID id;
-
 	private String name;
-
 	private int age;
-
 	private List<UUID> tutorialIds;
 
 	public Person() {

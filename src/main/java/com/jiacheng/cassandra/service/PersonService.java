@@ -36,20 +36,24 @@ public class PersonService {
 
 		// 使用 CompletableFuture 的 allOf 方法等待所有异步操作完成
 		CompletableFuture[] personVosFutures = persons.stream()
-				.map(person -> findTutorialsForPerson(person)
-						.thenApply(tutorials -> {
-							if (tutorials != null && !tutorials.isEmpty()) {
-								return new PersonVO(person, tutorials);
-							} else {
-								// 如果 tutorials 为空，创建一个没有教程的 PersonVO
-								return new PersonVO(person, new ArrayList<>());
-							}
-						}))
+				.map(this::createPersonVOWithTutorials)
 				.toArray(CompletableFuture[]::new);
 
 		CompletableFuture<Void> allOf = CompletableFuture.allOf(personVosFutures);
 
 		// 使用 thenApply 方法将 CompletableFuture 转换为 List<PersonVO>
+		// 1. fetch tutorials for each person
+		// 2. create PersonVO for each person
+		// 3. wait for CF finish and collect all PersonVOs to a list
+
+		/*
+		For example:
+		CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> "Hello");
+		String result = future.join();
+
+		future.join() will block until the future is completed and return its result "Hello"
+		 */
+
 		return allOf.thenApply(v ->
 				persons.stream()
 						.map(person -> findTutorialsForPerson(person)
@@ -59,7 +63,6 @@ public class PersonService {
 		);
 	}
 
-
 	public CompletableFuture<Person> createPerson(Person person) {
 		return CompletableFuture.completedFuture(personRepository.save(new Person(
 				UUIDs.timeBased(),
@@ -67,6 +70,17 @@ public class PersonService {
 				person.getAge(),
 				person.getTutorialIds()
 		)));
+	}
+
+
+	public CompletableFuture<PersonVO> createPersonVOWithTutorials(Person person) {
+		return findTutorialsForPerson(person)
+				.thenApply(tutorials -> {
+					if (tutorials == null || tutorials.isEmpty()) {
+						tutorials = new ArrayList<>();
+					}
+					return new PersonVO(person, tutorials);
+				});
 	}
 
 	private CompletableFuture<List<Optional<Tutorial>>> findTutorialsForPerson(Person person) {
@@ -86,10 +100,8 @@ public class PersonService {
 				tutorials.add(Optional.empty());
 			}
 		}
-
 		return CompletableFuture.completedFuture(tutorials);
 	}
-
 
 
 }
