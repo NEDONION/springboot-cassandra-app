@@ -11,6 +11,7 @@
 
 ## Get Started
 - Clone the repository, and install Maven Dependencies
+- Install Kafka, Zookeeper...
 
 ### Set up Cassandra
 
