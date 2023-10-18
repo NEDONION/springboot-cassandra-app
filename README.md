@@ -7,6 +7,7 @@
 - Cassandra
 - Email
 - Kafka
+- Zookeeper
 
 ## Get Started
 - Clone the repository, and install Maven Dependencies
@@ -38,12 +39,23 @@ use ned_learning;
     email TEXT,
     tutorialIds LIST<UUID>
 );
+```
 
+### Set up Kafka
+
+```shell
+kafka-topics.sh --create --zookeeper <your-IP-address>:2181 --replication-factor 1 --partitions 1 --topic demo-cassandra-email
 ```
 
 
+## Features
+- Tutorial CRUD
+- Person CRUD
+- Notification
+- Email Sender
+- Kafka Producer & Consumer
 
-## getAllTutorials
+### CRUD sample - getAllTutorials
 
 ```shell
 curl --location 'http://localhost:9999/api/tutorials'
@@ -79,7 +91,7 @@ curl --location 'http://localhost:9999/api/tutorials'
 ]
 ```
 
-## createTutorial
+### CRUD sample - createTutorial
 
 ```shell
 curl --location 'http://localhost:9999/api/tutorials' \
