@@ -1,11 +1,12 @@
-# SpringBoot Cassandra Demo - A CRUD Java Spring Boot with Cassandra
-
+# A Demo App with Spring Boot, Cassandra and Kafka
 
 ## Requisites
 - Java
 - Spring Boot
 - JPA
 - Cassandra
+- Email
+- Kafka
 
 ## Get Started
 - Clone the repository, and install Maven Dependencies

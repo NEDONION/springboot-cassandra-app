@@ -1,14 +1,18 @@
 package com.jiacheng.cassandra.service;
 
+import com.jiacheng.cassandra.async.KafkaProducerService;
 import com.jiacheng.cassandra.entity.Person;
 import com.jiacheng.cassandra.entity.Tutorial;
-import com.jiacheng.cassandra.model.EmailMessageModel;
+import com.jiacheng.cassandra.model.EmailAsyncRequestModel;
+import com.jiacheng.cassandra.model.KafkaMessageModel;
 import com.jiacheng.cassandra.repository.PersonRepository;
-import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class NotificationService {
 
 
@@ -16,28 +20,33 @@ public class NotificationService {
 
 	private final EmailService emailService;
 
-	public NotificationService(PersonRepository personRepository, EmailService emailService) {
+	private final KafkaProducerService kafkaProducerService;
+
+	public NotificationService(PersonRepository personRepository, EmailService emailService,
+			KafkaProducerService kafkaProducerService) {
 		this.personRepository = personRepository;
 		this.emailService = emailService;
+		this.kafkaProducerService = kafkaProducerService;
 	}
 
 	public void notifyPersonsForTutorialUpdate(Tutorial updatedTutorial) {
 		List<Person> relatedPersons = personRepository.findByTutorialId(updatedTutorial.getId());
 		for (Person person : relatedPersons) {
-			sendNotification(person, updatedTutorial);
+			sendNotificationToKafkaProducer(person, updatedTutorial);
 		}
 	}
 
-	private void sendNotification(Person person, Tutorial tutorial) {
-		EmailMessageModel emailMessageModel = new EmailMessageModel();
+	private void sendNotificationToKafkaProducer(Person person, Tutorial tutorial) {
+		String topic = "demo-cassandra-email";
+		EmailAsyncRequestModel emailAsyncRequestModel = new EmailAsyncRequestModel(person, tutorial);
 
-		String[] sendToPersonEmails = new String[10];
-		sendToPersonEmails[0] = person.getEmail();
+		KafkaMessageModel<EmailAsyncRequestModel> kafkaMessage = new KafkaMessageModel<>();
+		kafkaMessage.setTopic(topic);
+		kafkaMessage.setPayload(emailAsyncRequestModel);
 
-		emailMessageModel.setSubject("Tutorial Updated");
-		emailMessageModel.setSendToPersonEmails(sendToPersonEmails);;
-		emailMessageModel.setContent("Tutorial " + tutorial.getTitle() + " has been updated");
-
-		emailService.sendSimpleMessage(emailMessageModel);
+		log.info("Sending kafka message: {}", kafkaMessage);
+		kafkaProducerService.sendMessage(kafkaMessage);
 	}
+
+
 }

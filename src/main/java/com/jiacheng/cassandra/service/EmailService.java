@@ -1,13 +1,17 @@
 package com.jiacheng.cassandra.service;
 
+import com.jiacheng.cassandra.entity.Person;
+import com.jiacheng.cassandra.entity.Tutorial;
 import com.jiacheng.cassandra.model.EmailMessageModel;
 import java.util.Arrays;
 import java.util.Objects;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class EmailService {
 
 
@@ -15,6 +19,20 @@ public class EmailService {
 
 	public EmailService(JavaMailSender emailSender) {
 		this.emailSender = emailSender;
+	}
+
+
+	public void sendEmailNotification(Person person, Tutorial tutorial) {
+		EmailMessageModel emailMessageModel = new EmailMessageModel();
+
+		String[] sendToPersonEmails = new String[10];
+		sendToPersonEmails[0] = person.getEmail();
+
+		emailMessageModel.setSubject("Tutorial Updated");
+		emailMessageModel.setSendToPersonEmails(sendToPersonEmails);
+		emailMessageModel.setContent("Tutorial " + tutorial.getTitle() + " has been updated");
+		log.info("created emailMessageModel: {}", emailMessageModel);
+		sendSimpleMessage(emailMessageModel);
 	}
 
 	public void sendSimpleMessage(EmailMessageModel emailMessageModel) {
@@ -30,6 +48,8 @@ public class EmailService {
 		message.setTo(nonNullEmails);
 		message.setSubject(emailMessageModel.getSubject());
 		message.setText(emailMessageModel.getContent());
+
+		log.info("Sending email message to emailSender: {}", message);
 		emailSender.send(message);
 	}
 

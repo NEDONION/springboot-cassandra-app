@@ -95,7 +95,7 @@ public class TutorialController {
 			_tutorial.setDescription(tutorial.getDescription());
 			_tutorial.setPublished(tutorial.isPublished());
 
-			// notify user for tutorial update
+			// notify users for tutorial update
 			notificationService.notifyPersonsForTutorialUpdate(_tutorial);
 
 			return ResponseEntity.ok(tutorialRepository.save(_tutorial));
