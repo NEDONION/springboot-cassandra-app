@@ -1,9 +1,8 @@
 package com.jiacheng.cassandra.service;
 
 import com.datastax.driver.core.utils.UUIDs;
-import com.jiacheng.cassandra.annotation.LogExecutionTime;
-import com.jiacheng.cassandra.model.Person;
-import com.jiacheng.cassandra.model.Tutorial;
+import com.jiacheng.cassandra.entity.Person;
+import com.jiacheng.cassandra.entity.Tutorial;
 import com.jiacheng.cassandra.repository.PersonRepository;
 import com.jiacheng.cassandra.repository.TutorialRepository;
 import com.jiacheng.cassandra.vo.PersonVO;
@@ -68,6 +67,7 @@ public class PersonService {
 				UUIDs.timeBased(),
 				person.getName(),
 				person.getAge(),
+				person.getEmail(),
 				person.getTutorialIds()
 		)));
 	}
@@ -103,5 +103,46 @@ public class PersonService {
 		return CompletableFuture.completedFuture(tutorials);
 	}
 
+
+	public CompletableFuture<List<PersonVO>> findPersonByAgeRange(Integer minAge, Integer maxAge) {
+		List<Person> persons = personRepository.findByAgeBetween(minAge, maxAge);
+
+		CompletableFuture[] personVosFutures = persons.stream()
+				.map(this::createPersonVOWithTutorials)
+				.toArray(CompletableFuture[]::new);
+
+		CompletableFuture<Void> allOf = CompletableFuture.allOf(personVosFutures);
+
+		return allOf.thenApply(v ->
+				persons.stream()
+						.map(person -> findTutorialsForPerson(person)
+								.thenApply(tutorials -> new PersonVO(person, tutorials)))
+						.map(CompletableFuture::join)
+						.collect(Collectors.toList())
+		);
+	}
+
+	public Person findById(UUID id) {
+		return personRepository.findById(id).orElse(null);
+	}
+
+	public CompletableFuture<Person> updatePerson(UUID id, Person person) {
+		return CompletableFuture.supplyAsync(() -> {
+			Optional<Person> existingPersonOpt = personRepository.findById(id);
+			if (existingPersonOpt.isPresent()) {
+				Person existingPerson = existingPersonOpt.get();
+
+				// Update the attributes of the existing person
+				existingPerson.setName(person.getName());
+				existingPerson.setAge(person.getAge());
+				existingPerson.setEmail(person.getEmail());
+				existingPerson.setTutorialIds(person.getTutorialIds());
+
+				return personRepository.save(existingPerson);
+			} else {
+				throw new RuntimeException("No person found with ID: " + id);
+			}
+		});
+	}
 
 }

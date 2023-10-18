@@ -1,8 +1,9 @@
 package com.jiacheng.cassandra.controller;
 
 import com.jiacheng.cassandra.annotation.LogExecutionTime;
-import com.jiacheng.cassandra.model.Tutorial;
+import com.jiacheng.cassandra.entity.Tutorial;
 import com.jiacheng.cassandra.repository.TutorialRepository;
+import com.jiacheng.cassandra.service.NotificationService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +28,11 @@ public class TutorialController {
 
 	private final TutorialRepository tutorialRepository;
 
-	public TutorialController(TutorialRepository tutorialRepository) {
+	private final NotificationService notificationService;
+
+	public TutorialController(TutorialRepository tutorialRepository, NotificationService notificationService) {
 		this.tutorialRepository = tutorialRepository;
+		this.notificationService = notificationService;
 	}
 
 	@GetMapping("/tutorials")
@@ -82,14 +86,18 @@ public class TutorialController {
 
 	@PutMapping("/tutorials/{id}")
 	@LogExecutionTime
-	public ResponseEntity<Tutorial> updateTutorial(@RequestBody Tutorial tutorial) {
-		Optional<Tutorial> tutorialData = tutorialRepository.findById(tutorial.getId());
+	public ResponseEntity<Tutorial> updateTutorial(@PathVariable UUID id, @RequestBody Tutorial tutorial) {
+		Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
 
 		if (tutorialData.isPresent()) {
 			Tutorial _tutorial = tutorialData.get();
 			_tutorial.setTitle(tutorial.getTitle());
 			_tutorial.setDescription(tutorial.getDescription());
 			_tutorial.setPublished(tutorial.isPublished());
+
+			// notify user for tutorial update
+			notificationService.notifyPersonsForTutorialUpdate(_tutorial);
+
 			return ResponseEntity.ok(tutorialRepository.save(_tutorial));
 		} else {
 			return ResponseEntity.notFound().build();

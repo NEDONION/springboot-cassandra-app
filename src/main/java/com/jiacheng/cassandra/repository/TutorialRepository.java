@@ -1,6 +1,6 @@
 package com.jiacheng.cassandra.repository;
 
-import com.jiacheng.cassandra.model.Tutorial;
+import com.jiacheng.cassandra.entity.Tutorial;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.cassandra.repository.AllowFiltering;

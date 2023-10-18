@@ -30,12 +30,14 @@ CREATE TABLE tutorial(
 ```shell
 use ned_learning;
 
-CREATE TABLE person (
+  CREATE TABLE person (
     id UUID PRIMARY KEY,
     name TEXT,
     age INT,
+    email TEXT,
     tutorialIds LIST<UUID>
 );
+
 ```
 
 

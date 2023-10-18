@@ -1,7 +1,7 @@
 package com.jiacheng.cassandra.vo;
 
-import com.jiacheng.cassandra.model.Person;
-import com.jiacheng.cassandra.model.Tutorial;
+import com.jiacheng.cassandra.entity.Person;
+import com.jiacheng.cassandra.entity.Tutorial;
 import java.util.List;
 import java.util.Optional;
 import lombok.Data;
