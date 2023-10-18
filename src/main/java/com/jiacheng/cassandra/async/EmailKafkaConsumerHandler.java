@@ -5,6 +5,7 @@ import com.jiacheng.cassandra.entity.Tutorial;
 import com.jiacheng.cassandra.model.EmailAsyncRequestModel;
 import com.jiacheng.cassandra.service.EmailService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,8 @@ public class EmailKafkaConsumerHandler {
 		this.emailService = emailService;
 	}
 
-	@KafkaListener(topics = "demo-cassandra-email", groupId = "demo-cassandra-email-consumer")
+	// Dynamic config topics and groupId from application.properties
+	@KafkaListener(topics = "${kafka.email.topic}", groupId = "${kafka.email.consumer.group.id}")
 	public void consumeKafkaMessage(EmailAsyncRequestModel request) {
 		log.info("Received kafka message: {}", request.toString());
 		sendEmail(request.getPerson(), request.getTutorial());

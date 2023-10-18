@@ -7,8 +7,8 @@ import com.jiacheng.cassandra.model.EmailAsyncRequestModel;
 import com.jiacheng.cassandra.model.KafkaMessageModel;
 import com.jiacheng.cassandra.repository.PersonRepository;
 import java.util.List;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,14 +18,14 @@ public class NotificationService {
 
 	private final PersonRepository personRepository;
 
-	private final EmailService emailService;
-
 	private final KafkaProducerService kafkaProducerService;
 
-	public NotificationService(PersonRepository personRepository, EmailService emailService,
+	@Value("${kafka.email.topic}")
+	private String KAFKA_EMAIL_TOPIC;
+
+	public NotificationService(PersonRepository personRepository,
 			KafkaProducerService kafkaProducerService) {
 		this.personRepository = personRepository;
-		this.emailService = emailService;
 		this.kafkaProducerService = kafkaProducerService;
 	}
 
@@ -37,9 +37,8 @@ public class NotificationService {
 	}
 
 	private void sendNotificationToKafkaProducer(Person person, Tutorial tutorial) {
-		String topic = "demo-cassandra-email";
+		String topic = KAFKA_EMAIL_TOPIC;
 		EmailAsyncRequestModel emailAsyncRequestModel = new EmailAsyncRequestModel(person, tutorial);
-
 		KafkaMessageModel<EmailAsyncRequestModel> kafkaMessage = new KafkaMessageModel<>();
 		kafkaMessage.setTopic(topic);
 		kafkaMessage.setPayload(emailAsyncRequestModel);

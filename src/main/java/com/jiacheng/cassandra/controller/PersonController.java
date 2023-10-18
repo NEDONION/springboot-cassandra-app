@@ -82,7 +82,7 @@ public class PersonController {
 		}
 	}
 
-	// 更新用户信息
+
 	@PutMapping("/person/{id}")
 	@LogExecutionTime
 	public CompletableFuture<ResponseEntity<Person>> updatePerson(@PathVariable UUID id, @RequestBody Person person) {
