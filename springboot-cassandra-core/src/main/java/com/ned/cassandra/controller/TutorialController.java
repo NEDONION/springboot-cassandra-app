@@ -4,6 +4,7 @@ import com.ned.cassandra.annotation.LogExecutionTime;
 import com.ned.cassandra.entity.Tutorial;
 import com.ned.cassandra.repository.TutorialRepository;
 import com.ned.cassandra.service.NotificationService;
+import com.ned.log.annotation.OperationLog;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +37,7 @@ public class TutorialController {
 	}
 
 	@GetMapping("/tutorials")
-	@LogExecutionTime
+	@OperationLog(bizId = "'getAllTutorials'", msg = "'Request with title = ' + #title")
 	public ResponseEntity<List<Tutorial>> getAllTutorials(@RequestParam(required = false)
 	String title) {
 
@@ -57,7 +58,7 @@ public class TutorialController {
 	}
 
 	@GetMapping("/tutorials/{id}")
-	@LogExecutionTime
+	@OperationLog(bizId = "'getTutorialById'", msg = "'Request with id = ' + #id")
 	public ResponseEntity<Tutorial> getTutorialById(@PathVariable("id") UUID id) {
 		Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
 
