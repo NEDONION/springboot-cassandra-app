@@ -2,6 +2,7 @@ package com.jiacheng.cassandra.controller;
 
 
 import com.jiacheng.cassandra.annotation.LogExecutionTime;
+import com.jiacheng.cassandra.annotation.OperationLog;
 import com.jiacheng.cassandra.entity.Person;
 import com.jiacheng.cassandra.service.PersonService;
 import com.jiacheng.cassandra.vo.PersonVO;
@@ -30,7 +31,7 @@ public class PersonController {
 	}
 
 	@GetMapping("/person")
-	@LogExecutionTime
+	@OperationLog(bizId = "'Person'", msg = "'getAllPerson'")
 	public CompletableFuture<ResponseEntity<List<PersonVO>>> getAllPerson() {
 		try {
 			CompletableFuture<List<PersonVO>> personFuture = personService.findAllPersons();
@@ -58,7 +59,7 @@ public class PersonController {
 
 	// Fetch for Person by age range
 	@GetMapping("/person/age/range")
-	@LogExecutionTime
+	@OperationLog(bizId = "'Person'", msg = "'getPersonByAgeRange'")
 	public CompletableFuture<ResponseEntity<List<PersonVO>>> getPersonByAgeRange(
 			@RequestParam(required = false) Integer minAge,
 			@RequestParam(required = false) Integer maxAge) {
@@ -84,7 +85,7 @@ public class PersonController {
 
 
 	@PutMapping("/person/{id}")
-	@LogExecutionTime
+	@OperationLog(bizId = "'updatePerson'", msg = "'Updated user name = ' + #person.name + ' and id = ' + #id")
 	public CompletableFuture<ResponseEntity<Person>> updatePerson(@PathVariable UUID id, @RequestBody Person person) {
 		try {
 			CompletableFuture<Person> personFuture = personService.updatePerson(id, person);
