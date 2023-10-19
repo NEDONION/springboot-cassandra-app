@@ -50,6 +50,21 @@ use ned_learning;
 );
 ```
 
+```shell
+use ned_learning;
+
+CREATE TABLE log_record (
+    id TEXT PRIMARY KEY,
+    biz_id TEXT,
+    exception TEXT,
+    operate_date TIMESTAMP,
+    is_success BOOLEAN,
+    msg TEXT,
+    execute_result TEXT,
+    execution_time BIGINT
+);
+```
+
 ### Set up Kafka
 
 ```shell
