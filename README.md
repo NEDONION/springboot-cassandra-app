@@ -1,5 +1,13 @@
 # A Demo App with Spring Boot, Cassandra and Kafka
 
+## Features
+- RESTful CRUD
+- Notification
+- Email Sender
+- Kafka Producer & Consumer
+- Logging aspect, enable annotations, support custom context and persistence
+- Async Logging Manager
+
 ## Requisites
 - Java
 - Spring Boot
@@ -48,14 +56,7 @@ use ned_learning;
 kafka-topics.sh --create --zookeeper <your-IP-address>:2181 --replication-factor 1 --partitions 1 --topic demo-cassandra-email
 ```
 
-
-## Features
-- Tutorial CRUD
-- Person CRUD
-- Notification
-- Email Sender
-- Kafka Producer & Consumer
-
+## Documentations
 ### CRUD sample - getAllTutorials
 
 ```shell
