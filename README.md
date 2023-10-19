@@ -68,7 +68,11 @@ CREATE TABLE log_record (
 ### Set up Kafka
 
 ```shell
+# create topics
 kafka-topics.sh --create --zookeeper <your-IP-address>:2181 --replication-factor 1 --partitions 1 --topic demo-cassandra-email
+# or
+kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic demo-cassandra-email
+kafka-topics.sh --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 1 --topic demo-log-record
 ```
 
 ## Documentations
