@@ -16,6 +16,7 @@
 - Email
 - Kafka
 - Zookeeper
+- TransmittableThreadLocal
 
 ## Get Started
 - Clone the repository, and install Maven Dependencies
