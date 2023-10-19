@@ -5,7 +5,7 @@
 - Notification
 - Email Sender
 - Kafka Producer & Consumer
-- Logging aspect, enable annotations, support custom context and persistence
+- Logging Aspect, enable annotations, support custom context and persistence
 - Async Logging Manager
 
 ## Requisites
