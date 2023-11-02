@@ -61,7 +61,6 @@ public class SystemLogAspect {
 	private HttpServletRequest request;
 
 
-
 	private final SpelExpressionParser parser = new SpelExpressionParser();
 
 	private final DefaultParameterNameDiscoverer discoverer = new DefaultParameterNameDiscoverer();
@@ -327,20 +326,6 @@ public class SystemLogAspect {
 		if (!dataPipelineServiceResult && dataPipelineService != null && logRecordErrorHandlerService != null) {
 			logRecordErrorHandlerService.dataPipelineErrorHandler();
 		}
-	}
-
-	public String getClientIP(HttpServletRequest request) {
-		String clientIP = request.getHeader("X-Forwarded-For");
-		if (clientIP == null || clientIP.isEmpty() || "unknown".equalsIgnoreCase(clientIP)) {
-			clientIP = request.getHeader("Proxy-Client-IP");
-		}
-		if (clientIP == null || clientIP.isEmpty() || "unknown".equalsIgnoreCase(clientIP)) {
-			clientIP = request.getHeader("WL-Proxy-Client-IP");
-		}
-		if (clientIP == null || clientIP.isEmpty() || "unknown".equalsIgnoreCase(clientIP)) {
-			clientIP = request.getRemoteAddr();
-		}
-		return clientIP;
 	}
 
 	public String getUserAgentInfo(HttpServletRequest request) {
