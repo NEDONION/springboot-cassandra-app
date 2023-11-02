@@ -10,6 +10,7 @@ import com.ned.log.interfaces.IOperationLogGetService;
 import com.ned.log.interfaces.LogRecordErrorHandlerService;
 import com.ned.log.model.LogModel;
 import com.ned.log.thread.LogRecordThreadPool;
+import com.ned.log.utils.NetUtils;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
+import javax.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
@@ -54,6 +56,11 @@ public class SystemLogAspect {
 
 	@Autowired(required = false)
 	private DataPipelineService dataPipelineService;
+
+	@Autowired(required = false)
+	private HttpServletRequest request;
+
+
 
 	private final SpelExpressionParser parser = new SpelExpressionParser();
 
@@ -190,6 +197,9 @@ public class SystemLogAspect {
 		String bizId = null;
 		String msg = null;
 		Boolean functionExecuteSuccess = null;
+		String clientIP = null;
+		String userAgent = null;
+
 		try {
 			Object[] arguments = joinPoint.getArgs();
 			Method method = getMethod(joinPoint);
@@ -225,12 +235,17 @@ public class SystemLogAspect {
 				msg = parseParamToStringOrJson(msgSpel, context);
 			}
 
+			clientIP = NetUtils.getLocalIp();
+			userAgent = getUserAgentInfo(request);
+
 			LogModel = new LogModel();
 			LogModel.setLogId(UUID.randomUUID().toString());
 			LogModel.setBizId(bizId);
 			LogModel.setOperateDate(new Date());
 			LogModel.setMsg(msg);
 			LogModel.setIsSuccess(functionExecuteSuccess);
+			LogModel.setClientIp(clientIP);
+			LogModel.setUserAgent(userAgent);
 
 		} catch (Exception e) {
 			log.error("OperationLogAspect resolveExpress error", e);
@@ -312,6 +327,24 @@ public class SystemLogAspect {
 		if (!dataPipelineServiceResult && dataPipelineService != null && logRecordErrorHandlerService != null) {
 			logRecordErrorHandlerService.dataPipelineErrorHandler();
 		}
-
 	}
+
+	public String getClientIP(HttpServletRequest request) {
+		String clientIP = request.getHeader("X-Forwarded-For");
+		if (clientIP == null || clientIP.isEmpty() || "unknown".equalsIgnoreCase(clientIP)) {
+			clientIP = request.getHeader("Proxy-Client-IP");
+		}
+		if (clientIP == null || clientIP.isEmpty() || "unknown".equalsIgnoreCase(clientIP)) {
+			clientIP = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (clientIP == null || clientIP.isEmpty() || "unknown".equalsIgnoreCase(clientIP)) {
+			clientIP = request.getRemoteAddr();
+		}
+		return clientIP;
+	}
+
+	public String getUserAgentInfo(HttpServletRequest request) {
+		return request.getHeader("User-Agent");
+	}
+
 }

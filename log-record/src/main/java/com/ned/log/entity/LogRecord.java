@@ -38,8 +38,14 @@ public class LogRecord {
 	@Column("execution_time")
 	private Long executionTime;
 
+	@Column("client_ip")
+	private String clientIp;
+
+	@Column("user_agent")
+	private String userAgent;
+
 	public LogRecord(String id, String bizId, String exception, Date operateDate, Boolean isSuccess, String msg,
-			String executeResult, Long executionTime) {
+			String executeResult, Long executionTime, String clientIp, String userAgent) {
 		this.id = id;
 		this.bizId = bizId;
 		this.exception = exception;
@@ -48,6 +54,8 @@ public class LogRecord {
 		this.msg = msg;
 		this.executeResult = executeResult;
 		this.executionTime = executionTime;
+		this.clientIp = clientIp;
+		this.userAgent = userAgent;
 	}
 
 }

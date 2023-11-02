@@ -40,4 +40,8 @@ public class LogModel {
 	 * 方法执行时间（单位：毫秒）
 	 */
 	private Long executionTime;
+
+	private String clientIp;
+
+	private String userAgent;
 }

@@ -41,6 +41,8 @@ public class LogKafkaConsumerDBHandler {
 				.msg(logModel.getMsg())
 				.executeResult(logModel.getExecuteResult())
 				.executionTime(logModel.getExecutionTime())
+				.clientIp(logModel.getClientIp())
+				.userAgent(logModel.getUserAgent())
 				.build();
 	}
 }
