@@ -68,6 +68,23 @@ CREATE TABLE log_record (
 );
 ```
 
+Spark Aggregation data tables
+```shell
+CREATE TABLE ned_learning.biz_id_aggregation (
+    operate_day DATE,
+    biz_id TEXT,
+    count_per_biz_id INT,
+    PRIMARY KEY (operate_day, biz_id)
+);
+
+CREATE TABLE ned_learning.client_ip_aggregation (
+    operate_day DATE,
+    client_ip TEXT,
+    count_per_client_ip INT,
+    PRIMARY KEY (operate_day, client_ip)
+);
+```
+
 ### Set up Kafka
 
 ```shell
