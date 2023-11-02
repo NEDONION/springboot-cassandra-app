@@ -86,7 +86,7 @@ public class TutorialController {
 	}
 
 	@PutMapping("/tutorials/{id}")
-	@LogExecutionTime
+	@OperationLog(bizId = "'updateTutorial'", msg = "'Updated description = ' + #tutorial.description + ' and title = ' + #tutorial.title")
 	public ResponseEntity<Tutorial> updateTutorial(@PathVariable UUID id, @RequestBody Tutorial tutorial) {
 		Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
 

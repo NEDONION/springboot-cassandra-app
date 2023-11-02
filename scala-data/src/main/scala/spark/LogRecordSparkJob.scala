@@ -10,17 +10,13 @@ object LogRecordSparkJob {
     val spark = SparkSession.builder()
       .appName("CassandraSparkJob")
       .master("local[*]")
-      .config("spark.cassandra.connection.host", "localhost:9042")
+      .config("spark.cassandra.connection.host", "127.0.0.1:9042")
       .getOrCreate()
 
     val data = spark.read
       .format("org.apache.spark.sql.cassandra")
       .options(Map("table" -> "log_record", "keyspace" -> "ned_learning"))
       .load()
-
-
-//    val updatedData = data.withColumn("operate_day",
-//      trunc(date_format(col("operate_date"), "yyyy-MM-dd"), "day"))
 
 
     // Convert timestamp to date format
