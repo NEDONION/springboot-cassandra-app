@@ -1,0 +1,5 @@
+Hello Spark.
+Spark is great.
+Scala and Spark.
+Spark, Spark, Spark.
+Have fun with Spark.
