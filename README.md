@@ -62,7 +62,9 @@ CREATE TABLE log_record (
     is_success BOOLEAN,
     msg TEXT,
     execute_result TEXT,
-    execution_time BIGINT
+    execution_time BIGINT,
+    client_ip      TEXT,
+    user_agent     TEXT
 );
 ```
 
