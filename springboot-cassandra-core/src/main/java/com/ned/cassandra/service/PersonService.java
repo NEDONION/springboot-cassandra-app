@@ -6,6 +6,7 @@ import com.ned.cassandra.entity.Tutorial;
 import com.ned.cassandra.repository.PersonRepository;
 import com.ned.cassandra.repository.TutorialRepository;
 import com.ned.cassandra.vo.PersonVO;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,11 +14,18 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class PersonService {
+
+	private static final String PERSON_SERVICE_CB = "PersonServiceCB";
+	private static final String PERSON_SERVICE_RL = "PersonServiceRL";
 
 
 	private final PersonRepository personRepository;
@@ -30,6 +38,8 @@ public class PersonService {
 	}
 
 	@Async
+	@CircuitBreaker(name = PERSON_SERVICE_CB, fallbackMethod = "findAllPersonsFallback")
+	@RateLimiter(name = PERSON_SERVICE_RL)
 	public CompletableFuture<List<PersonVO>> findAllPersons() {
 		List<Person> persons = personRepository.findAll();
 
@@ -61,7 +71,7 @@ public class PersonService {
 						.collect(Collectors.toList())
 		);
 	}
-
+	@Async
 	public CompletableFuture<Person> createPerson(Person person) {
 		return CompletableFuture.completedFuture(personRepository.save(new Person(
 				UUIDs.timeBased(),
@@ -143,6 +153,11 @@ public class PersonService {
 				throw new RuntimeException("No person found with ID: " + id);
 			}
 		});
+	}
+	
+	public List<PersonVO> findAllPersonsFallback(Throwable t) {
+		log.info("findAllPersons in fallback method, return empty list");
+		return Collections.emptyList();
 	}
 
 }

@@ -13,5 +13,6 @@ public interface TutorialRepository extends CassandraRepository<Tutorial, UUID> 
 	@AllowFiltering
 	List<Tutorial> findByPublished(boolean published);
 
+//	@AllowFiltering
 	List<Tutorial> findByTitleContaining(String title);
 }

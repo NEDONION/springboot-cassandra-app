@@ -2,8 +2,8 @@ package com.ned.cassandra.controller;
 
 import com.ned.cassandra.annotation.LogExecutionTime;
 import com.ned.cassandra.entity.Tutorial;
-import com.ned.cassandra.repository.TutorialRepository;
 import com.ned.cassandra.service.NotificationService;
+import com.ned.cassandra.service.TutorialService;
 import com.ned.log.annotation.OperationLog;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,46 +21,37 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.datastax.driver.core.utils.UUIDs;
+
 
 @RestController
 @RequestMapping("/api")
 public class TutorialController {
 
-	private final TutorialRepository tutorialRepository;
+	private final TutorialService tutorialService;
 
 	private final NotificationService notificationService;
 
-	public TutorialController(TutorialRepository tutorialRepository, NotificationService notificationService) {
-		this.tutorialRepository = tutorialRepository;
+	public TutorialController(TutorialService tutorialService, NotificationService notificationService) {
+		this.tutorialService = tutorialService;
 		this.notificationService = notificationService;
 	}
 
 	@GetMapping("/tutorials")
 	@OperationLog(bizId = "'getAllTutorials'", msg = "'Request with title = ' + #title")
-	public ResponseEntity<List<Tutorial>> getAllTutorials(@RequestParam(required = false)
+	public ResponseEntity<List<Tutorial>> getAllTutorials(@RequestParam(required = true)
 	String title) {
 
-		List<Tutorial> tutorials = new ArrayList<>();
-		try {
-			if (title == null) {
-				tutorialRepository.findAll().forEach(tutorials::add);
-			} else {
-				tutorialRepository.findByTitleContaining(title).forEach(tutorials::add);
-			}
-			if (tutorials.isEmpty()) {
-				return ResponseEntity.noContent().build();
-			}
-			return ResponseEntity.ok(tutorials);
-		} catch (Exception e) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		List<Tutorial> tutorials = tutorialService.getAllTutorials(title);
+		if (tutorials.isEmpty()) {
+			return ResponseEntity.noContent().build();
 		}
+		return ResponseEntity.ok(tutorials);
 	}
 
 	@GetMapping("/tutorials/{id}")
 	@OperationLog(bizId = "'getTutorialById'", msg = "'Request with id = ' + #id")
 	public ResponseEntity<Tutorial> getTutorialById(@PathVariable("id") UUID id) {
-		Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
+		Optional<Tutorial> tutorialData = tutorialService.getTutorialById(id);
 
 		if (tutorialData.isPresent()) {
 			return ResponseEntity.ok(tutorialData.get());
@@ -73,12 +64,7 @@ public class TutorialController {
 	@LogExecutionTime
 	public ResponseEntity<Tutorial> createTutorial(@RequestBody Tutorial tutorial) {
 		try {
-			Tutorial _tutorial = tutorialRepository.save(new Tutorial(
-					UUIDs.timeBased(),
-					tutorial.getTitle(),
-					tutorial.getDescription(),
-					false
-			));
+			Tutorial _tutorial = tutorialService.createTutorial(tutorial);
 			return ResponseEntity.status(HttpStatus.CREATED).body(_tutorial);
 		} catch (Exception e) {
 			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -88,18 +74,11 @@ public class TutorialController {
 	@PutMapping("/tutorials/{id}")
 	@OperationLog(bizId = "'updateTutorial'", msg = "'Updated description = ' + #tutorial.description + ' and title = ' + #tutorial.title")
 	public ResponseEntity<Tutorial> updateTutorial(@PathVariable UUID id, @RequestBody Tutorial tutorial) {
-		Optional<Tutorial> tutorialData = tutorialRepository.findById(id);
 
-		if (tutorialData.isPresent()) {
-			Tutorial _tutorial = tutorialData.get();
-			_tutorial.setTitle(tutorial.getTitle());
-			_tutorial.setDescription(tutorial.getDescription());
-			_tutorial.setPublished(tutorial.isPublished());
+		Optional<Tutorial> updatedTutorial = tutorialService.updateTutorial(id, tutorial);
 
-			// notify users for tutorial update
-			notificationService.notifyPersonsForTutorialUpdate(_tutorial);
-
-			return ResponseEntity.ok(tutorialRepository.save(_tutorial));
+		if (updatedTutorial != null) {
+			return ResponseEntity.ok(updatedTutorial.get());
 		} else {
 			return ResponseEntity.notFound().build();
 		}
@@ -109,8 +88,8 @@ public class TutorialController {
 	@LogExecutionTime
 	public ResponseEntity<HttpStatus> deleteTutorial(@PathVariable("id") UUID id) {
 		try {
-			tutorialRepository.deleteById(id);
-			return ResponseEntity.ok().build();
+			tutorialService.deleteTutorial(id);
+			return ResponseEntity.noContent().build();
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -120,7 +99,7 @@ public class TutorialController {
 	@LogExecutionTime
 	public ResponseEntity<HttpStatus> deleteAllTutorials() {
 		try {
-			tutorialRepository.deleteAll();
+			tutorialService.deleteAllTutorials();
 			return ResponseEntity.noContent().build();
 		} catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -133,7 +112,7 @@ public class TutorialController {
 		List<Tutorial> tutorials = new ArrayList<>();
 
 		try {
-			tutorials = tutorialRepository.findByPublished(true);
+			tutorials = tutorialService.findByPublished();
 			if (tutorials.isEmpty()) {
 				return ResponseEntity.noContent().build();
 			}
@@ -142,6 +121,5 @@ public class TutorialController {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-
 
 }

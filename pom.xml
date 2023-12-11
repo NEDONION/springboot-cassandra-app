@@ -26,6 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.25</slf4j.version>
         <log4j2.version>2.11.1</log4j2.version>
+        <resilience-4j-version>1.7.0</resilience-4j-version>
     </properties>
 
 
@@ -150,6 +151,66 @@
             <artifactId>spark-cassandra-connector_2.11</artifactId>
             <version>2.5.2</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-circuitbreaker</artifactId>
+            <version>${resilience-4j-version}</version>
+        </dependency>
+
+        <!-- Resilience4j Retry -->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-retry</artifactId>
+            <version>${resilience-4j-version}</version>
+        </dependency>
+
+        <!-- Resilience4j Bulkhead -->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-bulkhead</artifactId>
+            <version>${resilience-4j-version}</version>
+        </dependency>
+
+        <!-- Resilience4j RateLimiter -->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-ratelimiter</artifactId>
+            <version>${resilience-4j-version}</version>
+        </dependency>
+
+        <!-- Resilience4j TimeLimiter -->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-timelimiter</artifactId>
+            <version>${resilience-4j-version}</version>
+        </dependency>
+
+        <!-- Resilience4j Cache -->
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-cache</artifactId>
+            <version>${resilience-4j-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-all</artifactId>
+            <version>${resilience-4j-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-metrics</artifactId>
+            <version>${resilience-4j-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.resilience4j</groupId>
+            <artifactId>resilience4j-annotations</artifactId>
+            <version>${resilience-4j-version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>
