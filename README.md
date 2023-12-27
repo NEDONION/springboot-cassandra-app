@@ -21,10 +21,24 @@
 - Spark
 
 ## Get Started
-- Clone the repository, and install Maven Dependencies
-- Install Kafka, Zookeeper...
 
-### Set up Cassandra
+### 1. Application setup 
+- Clone the repository, and install Maven Dependencies
+- Configure your own email sender
+
+```shell
+# Add VM options
+-DMAIL_PASSWORD="..."
+```
+
+### 2. Docker start
+- I use Cassandra on local, so port config might differ
+
+```shell
+make env-up
+```
+
+### Local need: Set up Cassandra
 
 ```shell
 create keyspace ned_learning with replication={'class':'SimpleStrategy', 'replication_factor':1};
@@ -70,7 +84,7 @@ CREATE TABLE log_record (
 );
 ```
 
-Spark Aggregation data tables
+### Local need: Spark Aggregation data tables
 ```shell
 CREATE TABLE ned_learning.biz_id_aggregation (
     operate_day DATE,
@@ -87,7 +101,7 @@ CREATE TABLE ned_learning.client_ip_aggregation (
 );
 ```
 
-### Set up Kafka
+### Optional: Set up Kafka
 
 ```shell
 # create topics
