@@ -1,22 +1,24 @@
 # A Demo App with Spring Boot, Cassandra and Kafka
 
 ## Features
-- RESTful CRUD
+- RESTful APIs CRUD
 - Notification
 - Email Sender
 - Kafka Producer & Consumer
-- Logging Aspect, enable annotations, support custom context and persistence
+- Logging Aspect, support annotations and persistence
 - Async Logging Manager
+- Big Data Aggregation, for audits of service and user records
 
 ## Requisites
 - Java
+- Scala 2.11 
 - Spring Boot
 - JPA
 - Cassandra
 - Email
 - Kafka
 - Zookeeper
-- TransmittableThreadLocal
+- Spark
 
 ## Get Started
 - Clone the repository, and install Maven Dependencies
