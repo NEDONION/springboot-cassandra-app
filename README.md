@@ -1,4 +1,4 @@
-# A Demo App with Spring Boot, Cassandra and Kafka
+# A Demo App with Spring Boot, Cassandra, Kafka, Spark, and Scala
 
 ## Features
 - RESTful APIs CRUD
